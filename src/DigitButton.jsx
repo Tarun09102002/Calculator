@@ -13,8 +13,17 @@ export default function DigitButton({ dispatch, digit }) {
             <button onClick={() => dispatch({ type: Action.CLEAR, payload: { digit: digit } })} className="span-two">{digit}</button>
         )
     }
+    else if (digit === "=") {
+        return (
+            <button onClick={() => dispatch({ type: Action.EVALUATE, payload: { digit: digit } })} className="span-two">{digit}</button>
+        )
+    }
 
-
+    else if (digit === "+" || digit === "-" || digit === "*" || digit === "÷") {
+        return (
+            <button onClick={() => dispatch({ type: Action.CHOOSE_OPERATION, payload: { digit: digit } })}>{digit}</button>
+        )
+    }
 
     else {
         return (

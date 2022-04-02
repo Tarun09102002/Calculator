@@ -15,6 +15,12 @@ export const Action = {
 const reducer = (state, { type, payload }) => {
 	switch (type) {
 		case Action.ADD_DIGIT:
+			if (payload.digit === ".") {
+				if (state.recentOperand.includes(".")) {
+					return { ...state }
+				}
+			}
+
 			return {
 				...state,
 				recentOperand: `${state.recentOperand || ""}${payload.digit}`
@@ -29,9 +35,56 @@ const reducer = (state, { type, payload }) => {
 
 		case Action.CLEAR:
 			return {
-				...state,
-				recentOperand: ""
+				recentOperand: "",
+				previousOperand: "",
+				Operand: ""
 			}
+
+		case Action.CHOOSE_OPERATION:
+			if (state.Operand) {
+				return { ...state }
+			}
+			else {
+				return {
+					previousOperand: state.recentOperand,
+					recentOperand: "",
+					Operand: payload.digit,
+				}
+			}
+
+		case Action.EVALUATE:
+			if (!state.Operand || !state.previousOperand || !state.recentOperand) {
+				return { ...state }
+			}
+			const { Operand, previousOperand, recentOperand } = state;
+			const previousOperandFloat = parseFloat(previousOperand);
+			const recentOperandFloat = parseFloat(recentOperand);
+			let value = 0;
+			// else {
+			switch (Operand) {
+				case "+":
+					value = previousOperandFloat + recentOperandFloat;
+					break;
+
+				case "-":
+					value = previousOperandFloat - recentOperandFloat;
+					break;
+				case "*":
+					value = previousOperandFloat * recentOperandFloat;
+					break;
+				case "÷":
+					value = previousOperandFloat / recentOperandFloat;
+					break;
+
+				default:
+					break;
+			}
+			return {
+				previousOperand: "",
+				Operand: "",
+				recentOperand: `${value}`
+			}
+		// }
 
 		default:
 			break;
@@ -67,7 +120,8 @@ function App() {
 				<DigitButton digit={"-"} dispatch={dispatch}></DigitButton>
 				<DigitButton digit={"."} dispatch={dispatch}></DigitButton>
 				<DigitButton digit={"0"} dispatch={dispatch}></DigitButton>
-				<button className='span-two'>=</button>
+				<DigitButton digit={"="} dispatch={dispatch}></DigitButton>
+				{/* <button className='span-two'>=</button> */}
 
 			</div>
 		</div>
